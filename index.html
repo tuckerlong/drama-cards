@@ -5,9 +5,21 @@
 	</head>
 
 	<body onload="generate()" style="background-color: #9AADBF;">
-		<div style="display: flex; justify-content: center;">
-			<img id="card-1" style="margin-right: 15px" src="" />
-			<img id="card-2" src="" />
+		<div style="display: flex; justify-content: center; gap: 15px">
+			<div style="display: grid; gap: 15px">
+				<img id="card-1" src="" />
+				<button onclick="reroll(0)">Reroll</button>
+			</div>
+
+			<div style="display: grid;">
+				<img id="card-2" src="" />
+				<button onclick="reroll(1)">Reroll</button>
+			</div>
+
+			<div style="display: grid;">
+				<img id="card-3" src="" />
+				<button onclick="reroll(2)">Reroll</button>
+			</div>
 		</div>
 
 		<script>
@@ -19,22 +31,42 @@
 			const paths = ['copper', 'silver', 'gold', 'platinum']
 			const imgs = [copper, silver, gold, plat];
 
+			var loadedData = localStorage.getItem('dramaCards');
+			var data = loadedData === null ? [] : JSON.parse(loadedData).data;
+
 			function generate() {
-				function randomCard() {
-					const r = Math.floor(Math.random() * 100);
-					
-					for (var i = 0, sum = 0; i < odds.length; i++) {
-						sum += odds[i];
-
-						if (r < sum) {
-							return `img/${paths[i]}/image--${imgs[i][Math.floor(Math.random() * imgs[i].length)]}.jpg`;
-						}
+				if (loadedData === null || data === []) {
+					for (var i = 0; i < 3; i++) {
+						data.push(randomCard());
 					}
-
-					return '';
 				}
-				document.getElementById("card-1").src = randomCard();
-				document.getElementById("card-2").src = randomCard();
+
+				data.forEach((src, idx) => document.getElementById(`card-${idx + 1}`).src = src);
+				localStorage.setItem('dramaCards', JSON.stringify({data}));
+			}
+
+			function randomCard() {
+				const r = Math.floor(Math.random() * 100);
+				
+				for (var i = 0, sum = 0; i < odds.length; i++) {
+					sum += odds[i];
+
+					if (r < sum) {
+						var path = `img/${paths[i]}/image--${imgs[i][Math.floor(Math.random() * imgs[i].length)]}.jpg`;
+						while (data.includes(path)) {
+							path = `img/${paths[i]}/image--${imgs[i][Math.floor(Math.random() * imgs[i].length)]}.jpg`;
+						}
+						return path;
+					}
+				}
+
+				return '';
+			}
+
+			function reroll(idx) {
+				data[idx] = randomCard();
+				document.getElementById(`card-${idx + 1}`).src = data[idx];
+				localStorage.setItem('dramaCards', JSON.stringify({data}));
 			}
 		</script>
 	</body>
