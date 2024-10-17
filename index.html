@@ -9,16 +9,28 @@
 			<div style="display: grid; gap: 15px">
 				<img id="card-1" src="" />
 				<button onclick="reroll(0)">Reroll</button>
+				<div>
+					<label>Used:</label>
+					<input id="used-0" type="checkbox" onchange="saveUsed()" />
+				</div>
 			</div>
 
 			<div style="display: grid;">
 				<img id="card-2" src="" />
 				<button onclick="reroll(1)">Reroll</button>
+				<div>
+					<label>Used:</label>
+					<input id="used-1" type="checkbox" onchange="saveUsed()" />
+				</div>
 			</div>
 
 			<div style="display: grid;">
 				<img id="card-3" src="" />
 				<button onclick="reroll(2)">Reroll</button>
+				<div>
+					<label>Used:</label>
+					<input id="used-2" type="checkbox" onchange="saveUsed()" />
+				</div>
 			</div>
 		</div>
 
@@ -68,6 +80,24 @@
 				document.getElementById(`card-${idx + 1}`).src = data[idx];
 				localStorage.setItem('dramaCards', JSON.stringify({data}));
 			}
+
+			function getUsed() {
+				var used = JSON.parse(localStorage.getItem('usedChecks') ?? JSON.stringify({ 0: false, 1: false, 2: false }));
+
+				document.getElementById(`used-0`).checked = used[0];
+				document.getElementById(`used-1`).checked = used[1];
+				document.getElementById(`used-2`).checked = used[2];
+			}
+
+			function saveUsed() {
+				localStorage.setItem('usedChecks', JSON.stringify({
+					0: document.getElementById(`used-0`).checked ?? false,
+					1: document.getElementById(`used-1`).checked ?? false,
+					2: document.getElementById(`used-2`).checked ?? false
+				}));
+			}
+
+			getUsed();
 		</script>
 	</body>
 </html>
